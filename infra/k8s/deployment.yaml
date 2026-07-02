@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rag-mcp-api
+  labels:
+    app: rag-mcp-api
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: rag-mcp-api
+  template:
+    metadata:
+      labels:
+        app: rag-mcp-api
+    spec:
+      containers:
+        - name: rag-api
+          image: rag-mcp-api:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8000
+          env:
+            - name: GOOGLE_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: rag-secrets
+                  key: google_api_key
+            - name: CHROMA_PERSIST_DIR
+              value: /app/storage/chroma_db
+          volumeMounts:
+            - name: storage
+              mountPath: /app/storage
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "500m"
+            limits:
+              memory: "1Gi"
+              cpu: "1"
+      volumes:
+        - name: storage
+          persistentVolumeClaim:
+            claimName: rag-storage-pvc
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: rag-storage-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi

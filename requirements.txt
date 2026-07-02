@@ -1,0 +1,26 @@
+# Core
+langchain
+langchain-community
+langchain-chroma
+langchain-google-genai
+langchain-huggingface
+chromadb
+
+# Embeddings (local, free)
+sentence-transformers
+
+# Document loaders
+pypdf
+python-multipart
+lxml
+
+# API
+fastapi
+uvicorn[standard]
+pydantic
+
+# MCP
+mcp
+
+# Utils
+python-dotenv
